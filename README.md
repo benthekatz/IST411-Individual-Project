@@ -1,7 +1,4 @@
 # IST 411 Proposal
-
-Hi! I'm your first Markdown file in **StackEdit**. If you want to learn about StackEdit, you can read me. If you want to play with Markdown, you can edit me. If you have finished with me, you can just create new files by opening the **file explorer** on the left corner of the navigation bar.
-
 ## Description
 A collaborative canvas where new additions are permanent. Users will be able to paint the canvas however they wish. Any contribution will remain on the canvas permanently, but can still be drawn over by another user. To combat malicious intent, (e.g. painting the entire canvas in a single color), users will be able to draw for a certain amount of time before receiving a timeout, preventing them from painting further. Once the timeout expires, the user will be able to access the canvas again and resume painting. 
 

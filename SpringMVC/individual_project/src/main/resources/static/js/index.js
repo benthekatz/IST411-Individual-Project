@@ -1,6 +1,9 @@
 var mouseOn = false;
+//brush
 var prevX, prevY;
 var canvas_context;
+//shapes
+var w, h;
 
 var drawData = [];
 
@@ -11,6 +14,7 @@ function init() {
 
     canvas.width = window.innerWidth * 0.75;
     canvas.height = window.innerHeight * 0.75
+
 
     $("#canvas").mousedown(function (e) {
         mouseOn = true;
@@ -30,29 +34,75 @@ function init() {
     $("#canvas").mouseleave(function (e) {
         mouseOn = false;
     });
+
+}
+
+function returnTool() {
+    return $(".active input").prop('id');
 }
 
 //painting
 function doPaint(x, y, isPaint) {
-    if (isPaint) {
-
-        canvas_context.beginPath();
-        canvas_context.strokeStyle = '#' + jscolor;
-        canvas_context.lineWidth = $("#select-width").val();
-//        canvas_context.strokeStyle = 'black';
-//        canvas_context.lineWidth = '1';
-        canvas_context.lineJoin = "round";
-        canvas_context.moveTo(prevX, prevY);
-        canvas_context.lineTo(x, y);
-        canvas_context.closePath();
-        canvas_context.stroke();
+    switch (returnTool()) {
+        case "brush":
+            if (isPaint) {
+                canvas_context.beginPath();
+                canvas_context.strokeStyle = '#' + jscolor;
+                canvas_context.lineWidth = $("#select-width").val();
+                canvas_context.lineJoin = "round";
+                canvas_context.moveTo(prevX, prevY);
+                canvas_context.lineTo(x, y);
+                canvas_context.closePath();
+                canvas_context.stroke();
+            }
+            prevX = x;
+            prevY = y;
+            break;
+        case "rect":
+            if (isPaint) {
+                canvas_context.beginPath();
+                canvas_context.strokeStyle = '#' + jscolor;
+                canvas_context.fillStyle = '#' + jscolor;
+                canvas_context.lineWidth = $("#select-width").val();
+                canvas_context.fillRect(x, y, 10, 10);
+                canvas_context.closePath();
+                canvas_context.stroke();
+            }
+            prevX = x;
+            prevY = y;
+            break;
+        case "circle":
+            if (isPaint) {
+                canvas_context.beginPath();
+                canvas_context.strokeStyle = '#' + jscolor;
+                canvas_context.fillStyle = '#' + jscolor;
+                canvas_context.lineWidth = $("#select-width").val();
+                canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
+            }
+            break;
+        case "line":
+            if (isPaint) {
+                canvas_context.beginPath();
+                canvas_context.strokeStyle = '#' + jscolor;
+                canvas_context.lineWidth = $("#select-width").val();
+                canvas_context.moveTo(x, y);
+                canvas_context.lineTo(prevX, prevY);
+                canvas_context.closePath();
+                canvas_context.stroke();
+            }
+            break;
+        default:
+            break;
     }
-    prevX = x;
-    prevY = y;
+
 }
 
 function updateColor(jscolor) {
     canvas_context.strokeStyle = '#' + jscolor;
+    canvas_context.fillStyle = '#' + jscolor;
 }
 
 function resizeCanvas() {
@@ -64,3 +114,4 @@ function resizeCanvas() {
     tmp_canvas.width = window.innerWidth * 0.75;
     tmp_canvas.height = window.innerHeight * 0.75;
 }
+

@@ -18,11 +18,10 @@
     </head>
 
     <body onload="init()" onresize="resizeCanvas()">
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-        <script src="jscolor.js"></script>
+
 
         <div id="title">
-            
+
         </div>
         <div id="canvas-container">
             <div id="toolbar">
@@ -49,15 +48,15 @@
                         <option value="5">3</option>
                         <option value="7">4</option>
                     </select>
-                    <a id="account-btn" class="g-signin2" data-onsuccess="onSignIn" data-toggle="collapse"></a>
-                    <a id="account-btn" class="btn btn-default navbar-btn pull-right collapse" onclick="signOut();">Sign Out</a>
+                    <a id="account-btn" class="g-signin2" data-onsuccess="onSignIn"></a>
+                    <a id="account-btn" class="btn btn-default navbar-btn pull-right" onclick="signOut();">Sign Out</a>
                 </nav>
             </div>
             <div id="paint">
                 <canvas id="canvas"></canvas>
             </div>
         </div>
-        
+
         <div id="loginModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -67,10 +66,25 @@
             </div>
         </div>
 
+
+        <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+        <script>
+                        // Initialize Firebase
+                        var config = {
+                            apiKey: "AIzaSyDTvqRlWJDmBnuVg2cPbhWz5SoN2KzWDTM",
+                            authDomain: "generative-canvas-411.firebaseapp.com",
+                            databaseURL: "https://generative-canvas-411.firebaseio.com",
+                            projectId: "generative-canvas-411",
+                            storageBucket: "generative-canvas-411.appspot.com",
+                            messagingSenderId: "414455299180"
+                        };
+                        firebase.initializeApp(config);
+        </script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="/js/jscolor.js"></script>
         <script src="/js/index.js"></script>
         <script src="/js/login.js"></script>
-        
+
         <!-- Google Sign-In -->
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <!-- Bootstrap v4.0 -->

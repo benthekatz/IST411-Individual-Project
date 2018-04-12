@@ -1,9 +1,16 @@
 var mouseOn = false;
+
 //brush
 var prevX, prevY;
 var canvas_context;
+
+//line
+var startX = 0;
+var startY = 0;
+
 //shapes
-var w, h;
+var w = 10;
+var h = 10;
 
 var drawData = [];
 
@@ -17,22 +24,56 @@ function init() {
 
 
     $("#canvas").mousedown(function (e) {
-        mouseOn = true;
-        doPaint(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+        if (returnTool() === "line") {
+            var x = e.pageX - $(this).offset().left;
+            var y = e.pageY - $(this).offset().top
+
+            mouseOn = true;
+
+            startX = x;
+            startY = y;
+        } else {
+            mouseOn = true;
+            doPaint(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+        }
     });
 
     $("#canvas").mousemove(function (e) {
         if (mouseOn) {
-            doPaint(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
+            if (returnTool() === "line") {
+
+            } else {
+                doPaint(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
+            }
+
         }
     });
 
     $("#canvas").mouseup(function (e) {
+        if (returnTool() === "line") {
+            var x = e.pageX - $(this).offset().left;
+            var y = e.pageY - $(this).offset().top;
+
+            canvas_context.beginPath();
+            canvas_context.moveTo(startX, startY);
+            canvas_context.lineTo(x, y);
+            canvas_context.strokeStyle = '#' + jscolor;
+            canvas_context.lineWidth = $("#select-width").val();
+            canvas_context.stroke();
+        }
         mouseOn = false;
     });
 
     $("#canvas").mouseleave(function (e) {
         mouseOn = false;
+    });
+
+    $("#canvas").mousemove(function (e) {
+        if (!mouseOn) {
+            return;
+        }
+
+
     });
 
 }
@@ -43,61 +84,34 @@ function returnTool() {
 
 //painting
 function doPaint(x, y, isPaint) {
+    canvas_context.beginPath();
+    canvas_context.strokeStyle = '#' + jscolor;
+    canvas_context.lineWidth = $("#select-width").val();
+    canvas_context.lineJoin = "round";
     switch (returnTool()) {
         case "brush":
             if (isPaint) {
-                canvas_context.beginPath();
-                canvas_context.strokeStyle = '#' + jscolor;
-                canvas_context.lineWidth = $("#select-width").val();
-                canvas_context.lineJoin = "round";
                 canvas_context.moveTo(prevX, prevY);
                 canvas_context.lineTo(x, y);
-                canvas_context.closePath();
-                canvas_context.stroke();
             }
             prevX = x;
             prevY = y;
             break;
         case "rect":
             if (isPaint) {
-                canvas_context.beginPath();
-                canvas_context.strokeStyle = '#' + jscolor;
-                canvas_context.fillStyle = '#' + jscolor;
-                canvas_context.lineWidth = $("#select-width").val();
-                canvas_context.fillRect(x, y, 10, 10);
-                canvas_context.closePath();
-                canvas_context.stroke();
+                canvas_context.lineWidth = $("#select-width").val() * 1.75;
+                canvas_context.rect(x, y, w, h);
             }
-            prevX = x;
-            prevY = y;
             break;
         case "circle":
             if (isPaint) {
-                canvas_context.beginPath();
-                canvas_context.strokeStyle = '#' + jscolor;
-                canvas_context.fillStyle = '#' + jscolor;
-                canvas_context.lineWidth = $("#select-width").val();
-                canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
-                canvas_context.closePath();
-                canvas_context.stroke();
-                canvas_context.fill();
+                canvas_context.arc(x, y, w, 0, 2 * Math.PI);
             }
-            break;
-        case "line":
-            if (isPaint) {
-                canvas_context.beginPath();
-                canvas_context.strokeStyle = '#' + jscolor;
-                canvas_context.lineWidth = $("#select-width").val();
-                canvas_context.moveTo(x, y);
-                canvas_context.lineTo(prevX, prevY);
-                canvas_context.closePath();
-                canvas_context.stroke();
-            }
-            break;
-        default:
             break;
     }
-
+    canvas_context.closePath();
+    canvas_context.stroke();
+    canvas_context.fill();
 }
 
 function updateColor(jscolor) {

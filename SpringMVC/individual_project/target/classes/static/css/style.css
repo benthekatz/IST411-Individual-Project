@@ -1,19 +1,13 @@
 body{
     overflow: hidden;
-    background-color: gray;
 }
 
-#canvas_container {
+#canvas-container {
     width: 75%;
     height: 75%;
     display: absolute;
     margin: auto;
-}
-
-#paint {
-    height: 100%;
-    width: 100%;
-    position: relative;
+    padding-top: 100px;
 }
 
 #canvas {
@@ -22,6 +16,18 @@ body{
     height: 100%;
     cursor: crosshair;
 }
+
+#account-btn {
+   float: right !important;
+   color: white;
+}
+
+#paint {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
 
 #toolbar {
     
@@ -39,14 +45,37 @@ input, select {
     color: white;
 }
 
-/*#temp_canvas {
-    position: absolute;
-    left: 0; 
-    right: 0;
-    bottom: 0; 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
     top: 0;
-    height: 100%;
     width: 100%;
-    
-    border: 1px solid purple;
-}*/
+    height: 100%;
+    overflow: auto;
+    background-color: black;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 20%;
+}
+
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}

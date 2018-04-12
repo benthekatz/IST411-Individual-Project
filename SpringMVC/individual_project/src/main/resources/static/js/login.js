@@ -1,5 +1,9 @@
 var auth2;
 var loginStatus;
+var modal = document.getElementById("loginModal");
+var close = document.getElementsByClassName("close")[0];
+var error = document.getElementById("error");
+
 
 var initClient = function () {
     gapi.load('auth2', function () {
@@ -12,8 +16,10 @@ var initClient = function () {
 
     if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
         loginStatus = true;
+        alert(loginStatus);
     } else {
         loginStatus = false;
+        alert(loginStatus);
     }
 };
 
@@ -23,27 +29,35 @@ function onSignIn(googleUser) {
     console.log('Name: ' + profile.getName());
     console.log('Image URL: ' + profile.getImageUrl());
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+    var id_token = googleUser.getAuthResponse().id_token;
+    
+
     loginStatus = true;
+    $(".collapse").collapse("show");
+    modal.style.display = "none"
 }
 
-var onSuccess = function (user) {
-    console.log('Signed in as ' + user.getBasicProfile().getName());
-};
-
 var onFailure = function (error) {
-    console.log(error);
+    error.style.display = "block";
 };
 
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
         console.log('User signed out.');
+        $(".collapse").collapse("hide");
         loginStatus = false;
     });
 }
 
 $("#canvas").mousedown(function (e) {
-    if(!loginStatus) {
-        alert("You must sign in to use the canvas");
+    if (!loginStatus) {
+        modal.style.display = "block";
     }
 });
+
+close.onclick = function () {
+    modal.style.display = "none";
+}
+

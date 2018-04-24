@@ -56,6 +56,9 @@
                 <canvas id="canvas"></canvas>
             </div>
         </div>
+        <div id="drawingTimer">
+            <center><div class="values"></div></center>
+        </div>
 
         <div id="loginModal" class="modal">
             <div class="modal-content">
@@ -63,6 +66,14 @@
                 <br /><p>You Must Sign In to use the Canvas</p>
                 <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onFailure" data-toggle="collapse"></div>
                 <p id="error" style="color: red; display: none;">Error Signing In</p>
+            </div>
+        </div>
+        
+        <div id="timeoutModal" class="modal">
+            <div class="modal-content">
+                <div id="timeoutTimer">
+                    <center><div class="values"></div></center>
+                </div>
             </div>
         </div>
 
@@ -81,6 +92,7 @@
                         firebase.initializeApp(config);
         </script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="/js/easytimer.min.js"></script>
         <script src="/js/jscolor.js"></script>
         <script src="/js/index.js"></script>
         <script src="/js/login.js"></script>

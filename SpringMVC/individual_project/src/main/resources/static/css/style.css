@@ -79,3 +79,7 @@ input, select {
     text-decoration: none;
     cursor: pointer;
 }
+
+.values {
+    font-size: 200%;
+}

@@ -123,9 +123,5 @@ function resizeCanvas() {
     var canvas = document.querySelector('#canvas');
     canvas.width = window.innerWidth * 0.75;
     canvas.height = window.innerHeight * 0.75;
-
-    var tmp_canvas = document.querySelector('#temp_canvas');
-    tmp_canvas.width = window.innerWidth * 0.75;
-    tmp_canvas.height = window.innerHeight * 0.75;
 }
 

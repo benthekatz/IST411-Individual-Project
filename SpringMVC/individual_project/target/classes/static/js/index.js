@@ -67,14 +67,12 @@ function init() {
     $("#canvas").mouseleave(function (e) {
         mouseOn = false;
     });
-
-    $("#canvas").mousemove(function (e) {
-        if (!mouseOn) {
-            return;
-        }
-
-
-    });
+//
+//    $("#canvas").mousemove(function (e) {
+//        if (!mouseOn) {
+//            return;
+//        }
+//    });
 
 }
 
@@ -117,6 +115,7 @@ function doPaint(x, y, isPaint) {
 function updateColor(jscolor) {
     canvas_context.strokeStyle = '#' + jscolor;
     canvas_context.fillStyle = '#' + jscolor;
+    hex = jscolor.toHEXString();
 }
 
 function resizeCanvas() {

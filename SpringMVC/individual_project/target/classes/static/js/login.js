@@ -1,7 +1,7 @@
 //google login
 var auth2;
 var loginStatus;
-var timeoutStatus
+var timeoutStatus;
 
 //login modal
 var modal = document.getElementById("loginModal");
@@ -27,7 +27,7 @@ var initClient = function () {
             client_id: 'CLIENT_ID.apps.googleusercontent.com'
         });
 
-        auth2.attachClickHandler('signin-button', {}, onSuccess, onFailure);
+        auth2.attachClickHandler('signin-button', {}, onSignIn, onFailure);
     });
 
     if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
@@ -73,27 +73,26 @@ function onSignIn(googleUser) {
     var timeout;
     ref.once("value", function (snapshot) {
         timeout = snapshot.child("timeout_active").val();
-        alert(timeout);
         if (timeout === true) {
-            lockStatus = true;
+            timeoutStatus = true;
             lock(userId);
         } else {
-            lockStatus = false;
+            timeoutStatus = false;
             unlock(userId);
         }
     }, function (error) {
         console.log("Error: " + error.code);
     });
-    
-    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(),timeoutStatus);
+
+    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(), timeoutStatus);
 }
 
 function unlock(userId) {
-    lockStatus = false;
+    timeoutStatus = false;
     timeoutModal.style.display = "none";
 
     firebase.database().ref('users/' + userId).update({
-        timeout_active: false
+        timeout_active: timeoutStatus
     });
 
     drawingTimer.start({countdown: true, startValues: {seconds: 30}});
@@ -108,11 +107,11 @@ function unlock(userId) {
 }
 
 function lock(userId) {
-    lockStatus = true;
+    timeoutStatus = true;
     timeoutModal.style.display = "block";
 
     firebase.database().ref('users/' + userId).update({
-        timeout_active: true
+        timeout_active: timeoutStatus
     });
 
     timeoutTimer.start({countdown: true, startValues: {seconds: 30}});
@@ -147,32 +146,84 @@ var onFailure = function (error) {
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     $(".collapse").collapse("hide");
-    loginStatus = false;
-
     drawingTimer.stop();
     $('#drawingTimer .values').html("");
-    
     auth2.signOut().then(function () {
+        loginStatus = false;
         console.log('User signed out.');
     });
 }
-
-$("#canvas").mousedown(function (e) {
-    if (!loginStatus) {
-        modal.style.display = "block";
-    }
-});
 
 close.onclick = function () {
     modal.style.display = "none";
 };
 
-function writeUserData(userId, name, email, imageUrl, lockStatus) {
+function writeUserData(userId, name, email, imageUrl, timeoutStatus) {
     firebase.database().ref('users/' + userId).set({
         username: name,
         email: email,
         profile_picture: imageUrl,
-        timeout_active: lockStatus
+        timeout_active: timeoutStatus
     });
 }
 
+var hex = "#000000";
+var drawingRef = firebase.database().ref('drawings');
+var newDrawingRef = drawingRef.push();
+var mouseOn = false;
+var tempDrawing = [];
+
+$("#canvas").mousedown(function (e) {
+    mouseOn = true;
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+
+    if (!loginStatus) {
+        modal.style.display = "block";
+    } else if (loginStatus && !timeoutStatus) {
+        tempDrawing.push(x, y);
+        startDrawing();
+    }
+
+
+});
+
+function startDrawing() {
+    $("#canvas").mousemove(function (e) {
+        var x = e.pageX - $(this).offset().left;
+        var y = parseInt(e.pageY - $(this).offset().top);
+
+        if (mouseOn) {
+            tempDrawing.push(x, y);
+        }
+    });
+
+    $("#canvas").mouseup(function (e) {
+        var x = e.pageX - $(this).offset().left;
+        var y = parseInt(e.pageY - $(this).offset().top);
+        var width;
+        if ($("#select-width").val() === null) {
+            width = 1;
+        } else {
+            width = $("#select-width").val();
+        }
+        
+        tempDrawing.push(x, y);
+
+        drawingRef.push({
+            points: tempDrawing,
+            color: hex,
+            width: width
+        });
+
+        mouseOn = false;
+        tempDrawing = [];
+    });
+}
+
+
+
+$("#canvas").mouseleave(function (e) {
+    mouseOn = false;
+    //endDrawing();
+});

@@ -1,6 +1,7 @@
 //google login
 var auth2;
 var loginStatus;
+var timeoutStatus
 
 //login modal
 var modal = document.getElementById("loginModal");
@@ -63,25 +64,28 @@ function onSignIn(googleUser) {
         }
     });
 
-    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl());
-
     loginStatus = true;
     $(".collapse").collapse("show");
     modal.style.display = "none";
-    
+
     var userId = profile.getId();
     var ref = firebase.database().ref("users/" + userId);
     var timeout;
     ref.once("value", function (snapshot) {
         timeout = snapshot.child("timeout_active").val();
+        alert(timeout);
         if (timeout === true) {
+            lockStatus = true;
             lock(userId);
         } else {
+            lockStatus = false;
             unlock(userId);
         }
     }, function (error) {
         console.log("Error: " + error.code);
     });
+    
+    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(),timeoutStatus);
 }
 
 function unlock(userId) {
@@ -111,7 +115,7 @@ function lock(userId) {
         timeout_active: true
     });
 
-    timeoutTimer.start({countdown: true, startValues: {seconds: 60}});
+    timeoutTimer.start({countdown: true, startValues: {seconds: 30}});
     $('#timeoutTimer .values').html(timeoutTimer.getTimeValues().toString());
     timeoutTimer.addEventListener('secondsUpdated', function (e) {
         $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
@@ -142,17 +146,14 @@ var onFailure = function (error) {
 
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
+    $(".collapse").collapse("hide");
+    loginStatus = false;
+
+    drawingTimer.stop();
+    $('#drawingTimer .values').html("");
+    
     auth2.signOut().then(function () {
         console.log('User signed out.');
-        $(".collapse").collapse("hide");
-        loginStatus = false;
-
-        firebase.database().ref('users/' + userId).update({
-            timeout_active: true
-        });
-        
-        drawingTimer.stop();
-        $('#drawingTimer .values').html("");
     });
 }
 
@@ -166,12 +167,12 @@ close.onclick = function () {
     modal.style.display = "none";
 };
 
-function writeUserData(userId, name, email, imageUrl) {
+function writeUserData(userId, name, email, imageUrl, lockStatus) {
     firebase.database().ref('users/' + userId).set({
         username: name,
         email: email,
         profile_picture: imageUrl,
-        timeout_active: false
+        timeout_active: lockStatus
     });
 }
 

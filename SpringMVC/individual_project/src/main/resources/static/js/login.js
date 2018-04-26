@@ -20,6 +20,7 @@ var database = firebase.database();
 //timers
 var drawingTimer = new Timer();
 var timeoutTimer = new Timer();
+var timeLeft;
 
 var initClient = function () {
     gapi.load('auth2', function () {
@@ -102,6 +103,7 @@ function unlock(userId) {
     $('#drawingTimer .values').html(drawingTimer.getTimeValues().toString());
     drawingTimer.addEventListener('secondsUpdated', function (e) {
         $('#drawingTimer .values').html(drawingTimer.getTimeValues().toString());
+        timeLeft = drawingTimer.getTimeValues();
     });
     drawingTimer.addEventListener('targetAchieved', function (e) {
         $('#drawingTimer .values').html("");
@@ -117,7 +119,7 @@ function lock(userId) {
         timeout_active: timeoutStatus
     });
 
-    timeoutTimer.start({countdown: true, startValues: {seconds: 30}});
+    timeoutTimer.start({countdown: true, startValues: {seconds: 60}});
     $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
     timeoutTimer.addEventListener('secondsUpdated', function (e) {
         $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
@@ -318,7 +320,6 @@ function renderDrawings(tool, color, width, points) {
             case "circle":
                 canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
                 canvas_context.stroke();
-                canvas_context.closePath();
                 break;
         }
     }

@@ -16,6 +16,7 @@ var drawData = [];
 
 //initialize
 function init() {
+
     canvas = document.getElementById("canvas");
     canvas_context = canvas.getContext("2d");
 
@@ -68,14 +69,7 @@ function init() {
         mouseOn = false;
     });
 
-    $("#canvas").mousemove(function (e) {
-        if (!mouseOn) {
-            return;
-        }
-
-
-    });
-
+    readCanvas();
 }
 
 function returnTool() {
@@ -101,6 +95,7 @@ function doPaint(x, y, isPaint) {
             if (isPaint) {
                 canvas_context.lineWidth = $("#select-width").val() * 1.75;
                 canvas_context.rect(x, y, w, h);
+                canvas_context.fill();
             }
             break;
         case "circle":
@@ -111,17 +106,12 @@ function doPaint(x, y, isPaint) {
     }
     canvas_context.closePath();
     canvas_context.stroke();
-    canvas_context.fill();
+    //canvas_context.fill();
 }
 
 function updateColor(jscolor) {
     canvas_context.strokeStyle = '#' + jscolor;
     canvas_context.fillStyle = '#' + jscolor;
-}
-
-function resizeCanvas() {
-    var canvas = document.querySelector('#canvas');
-    canvas.width = window.innerWidth * 0.75;
-    canvas.height = window.innerHeight * 0.75;
+    hex = jscolor.toHEXString();
 }
 

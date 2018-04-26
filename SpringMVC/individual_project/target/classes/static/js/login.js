@@ -1,6 +1,7 @@
 //google login
 var auth2;
 var loginStatus;
+var timeoutStatus;
 
 //login modal
 var modal = document.getElementById("loginModal");
@@ -19,6 +20,7 @@ var database = firebase.database();
 //timers
 var drawingTimer = new Timer();
 var timeoutTimer = new Timer();
+var timeLeft;
 
 var initClient = function () {
     gapi.load('auth2', function () {
@@ -26,7 +28,7 @@ var initClient = function () {
             client_id: 'CLIENT_ID.apps.googleusercontent.com'
         });
 
-        auth2.attachClickHandler('signin-button', {}, onSuccess, onFailure);
+        auth2.attachClickHandler('signin-button', {}, onSignIn, onFailure);
     });
 
     if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
@@ -63,39 +65,45 @@ function onSignIn(googleUser) {
         }
     });
 
-    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl());
-
     loginStatus = true;
     $(".collapse").collapse("show");
     modal.style.display = "none";
-    
+
     var userId = profile.getId();
     var ref = firebase.database().ref("users/" + userId);
     var timeout;
     ref.once("value", function (snapshot) {
         timeout = snapshot.child("timeout_active").val();
         if (timeout === true) {
+            timeoutStatus = true;
             lock(userId);
         } else {
+            timeoutStatus = false;
             unlock(userId);
         }
     }, function (error) {
         console.log("Error: " + error.code);
     });
+
+    if (timeoutStatus === null) {
+        timeoutStatus = false;
+    }
+    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(), timeoutStatus);
 }
 
 function unlock(userId) {
-    lockStatus = false;
+    timeoutStatus = false;
     timeoutModal.style.display = "none";
 
     firebase.database().ref('users/' + userId).update({
-        timeout_active: false
+        timeout_active: timeoutStatus
     });
 
     drawingTimer.start({countdown: true, startValues: {seconds: 30}});
     $('#drawingTimer .values').html(drawingTimer.getTimeValues().toString());
     drawingTimer.addEventListener('secondsUpdated', function (e) {
         $('#drawingTimer .values').html(drawingTimer.getTimeValues().toString());
+        timeLeft = drawingTimer.getTimeValues();
     });
     drawingTimer.addEventListener('targetAchieved', function (e) {
         $('#drawingTimer .values').html("");
@@ -104,15 +112,15 @@ function unlock(userId) {
 }
 
 function lock(userId) {
-    lockStatus = true;
+    timeoutStatus = true;
     timeoutModal.style.display = "block";
 
     firebase.database().ref('users/' + userId).update({
-        timeout_active: true
+        timeout_active: timeoutStatus
     });
 
     timeoutTimer.start({countdown: true, startValues: {seconds: 60}});
-    $('#timeoutTimer .values').html(timeoutTimer.getTimeValues().toString());
+    $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
     timeoutTimer.addEventListener('secondsUpdated', function (e) {
         $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
     });
@@ -142,36 +150,181 @@ var onFailure = function (error) {
 
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
+    $(".collapse").collapse("hide");
+    drawingTimer.stop();
+    $('#drawingTimer .values').html("");
     auth2.signOut().then(function () {
-        console.log('User signed out.');
-        $(".collapse").collapse("hide");
         loginStatus = false;
-
-        firebase.database().ref('users/' + userId).update({
-            timeout_active: true
-        });
-        
-        drawingTimer.stop();
-        $('#drawingTimer .values').html("");
+        console.log('User signed out.');
     });
 }
-
-$("#canvas").mousedown(function (e) {
-    if (!loginStatus) {
-        modal.style.display = "block";
-    }
-});
 
 close.onclick = function () {
     modal.style.display = "none";
 };
 
-function writeUserData(userId, name, email, imageUrl) {
+function writeUserData(userId, name, email, imageUrl, timeoutStatus) {
     firebase.database().ref('users/' + userId).set({
         username: name,
         email: email,
         profile_picture: imageUrl,
-        timeout_active: false
+        timeout_active: timeoutStatus
     });
 }
 
+var hex = "#000000";
+var drawingRef = firebase.database().ref('drawings');
+var newDrawingRef = drawingRef.push();
+var mouseOn = false;
+var tempDrawing = [];
+
+$("#canvas").mousedown(function (e) {
+    mouseOn = true;
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+
+    if (!loginStatus) {
+        modal.style.display = "block";
+    } else if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+        tempDrawing.push(x, y);
+    }
+});
+
+$("#canvas").mousemove(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+
+    if (mouseOn) {
+        if (returnTool() === "line") {
+
+        } else {
+            if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+                tempDrawing.push(x, y);
+            }
+        }
+    }
+});
+
+$("#canvas").mouseup(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+    var width;
+    var tool = returnTool();
+    if ($("#select-width").val() === null || $("#select-width").val() === "") {
+        width = 1;
+    } else {
+        width = $("#select-width").val();
+    }
+
+    if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+        tempDrawing.push(x, y);
+
+        drawingRef.push({
+            tool: tool,
+            points: tempDrawing,
+            color: hex,
+            width: width
+        });
+    }
+    mouseOn = false;
+    tempDrawing = [];
+});
+
+$("#canvas").mouseleave(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+    var width;
+    var tool = returnTool();
+    if ($("#select-width").val() === null || $("#select-width").val() === "") {
+        width = 1;
+    } else {
+        width = $("#select-width").val();
+    }
+
+    if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+        tempDrawing.push(x, y);
+
+        drawingRef.push({
+            tool: tool,
+            points: tempDrawing,
+            color: hex,
+            width: width
+        });
+    }
+    mouseOn = false;
+    tempDrawing = [];
+});
+
+function readCanvas() {
+    drawingRef.once('value', gotData, errData);
+}
+
+var canvas = document.getElementById("canvas");
+var canvas_context = canvas.getContext("2d");
+
+function gotData(data) {
+    if (!data.hasChildren()) {
+
+    } else {
+        //console.log(data.val());
+        var drawings = data.val();
+        var keys = Object.keys(drawings);
+        //console.log(keys);
+
+        for (var i = 0; i < keys.length; i++) {
+            var k = keys[i];
+            var tool = drawings[k].tool;
+            var color = drawings[k].color;
+            var width = drawings[k].width;
+            var points = drawings[k].points;
+
+            renderDrawings(tool, color, width, points);
+        }
+    }
+}
+
+function renderDrawings(tool, color, width, points) {
+    var prevX, prevY;
+
+    canvas_context.beginPath();
+    canvas_context.strokeStyle = color;
+    canvas_context.fillStyle = color;
+    canvas_context.lineWidth = width;
+    canvas_context.lineJoin = "round";
+    for (var j = 0; j < points.length; j += 2) {
+        var x = points[j];
+        var y = points[j + 1];
+
+        switch (tool) {
+            case "line":
+            case "brush":
+
+                canvas_context.moveTo(prevX, prevY);
+                canvas_context.lineTo(x, y);
+                prevX = x;
+                prevY = y;
+
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
+                break;
+            case "rect":
+                canvas_context.beginPath();
+                canvas_context.lineWidth = width * 1.75;
+                canvas_context.rect(x, y, 10, 10);
+
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
+                break;
+            case "circle":
+                canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
+                canvas_context.stroke();
+                break;
+        }
+    }
+}
+
+function errData(err) {
+    console.log(err);
+}

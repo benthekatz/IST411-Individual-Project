@@ -183,7 +183,7 @@ $("#canvas").mousedown(function (e) {
 
     if (!loginStatus) {
         modal.style.display = "block";
-    } else if (loginStatus && !timeoutStatus) {
+    } else if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
         tempDrawing.push(x, y);
     }
 });
@@ -196,7 +196,9 @@ $("#canvas").mousemove(function (e) {
         if (returnTool() === "line") {
 
         } else {
-            tempDrawing.push(x, y);
+            if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+                tempDrawing.push(x, y);
+            }
         }
     }
 });
@@ -206,37 +208,13 @@ $("#canvas").mouseup(function (e) {
     var y = parseInt(e.pageY - $(this).offset().top);
     var width;
     var tool = returnTool();
-    if ($("#select-width").val() === null) {
+    if ($("#select-width").val() === null || $("#select-width").val() === "") {
         width = 1;
     } else {
-        width = parseInt($("#select-width").val());
+        width = $("#select-width").val();
     }
 
-    tempDrawing.push(x, y);
-
-    drawingRef.push({
-        tool: tool,
-        points: tempDrawing,
-        color: hex,
-        width: width
-    });
-
-    mouseOn = false;
-    tempDrawing = [];
-});
-
-$("#canvas").mouseleave(function (e) {
-    var x = e.pageX - $(this).offset().left;
-    var y = parseInt(e.pageY - $(this).offset().top);
-    var tool = returnTool();
-    var width;
-    if ($("#select-width").val() === null) {
-        width = 1;
-    } else {
-        width = parseInt($("#select-width").val());
-    }
-
-    if (mouseOn) {
+    if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
         tempDrawing.push(x, y);
 
         drawingRef.push({
@@ -246,6 +224,33 @@ $("#canvas").mouseleave(function (e) {
             width: width
         });
     }
+    mouseOn = false;
+    tempDrawing = [];
+});
+
+$("#canvas").mouseleave(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+    var width;
+    var tool = returnTool();
+    if ($("#select-width").val() === null || $("#select-width").val() === "") {
+        width = 1;
+    } else {
+        width = $("#select-width").val();
+    }
+
+    if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+        tempDrawing.push(x, y);
+
+        drawingRef.push({
+            tool: tool,
+            points: tempDrawing,
+            color: hex,
+            width: width
+        });
+    }
+    mouseOn = false;
+    tempDrawing = [];
 });
 
 function readCanvas() {
@@ -291,23 +296,32 @@ function renderDrawings(tool, color, width, points) {
         switch (tool) {
             case "line":
             case "brush":
+
                 canvas_context.moveTo(prevX, prevY);
                 canvas_context.lineTo(x, y);
                 prevX = x;
                 prevY = y;
+
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
                 break;
             case "rect":
+                canvas_context.beginPath();
                 canvas_context.lineWidth = width * 1.75;
                 canvas_context.rect(x, y, 10, 10);
+
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
                 break;
             case "circle":
                 canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
+                canvas_context.stroke();
+                canvas_context.closePath();
                 break;
         }
     }
-    canvas_context.closePath();
-    canvas_context.stroke();
-    canvas_context.fill();
 }
 
 function errData(err) {

@@ -16,6 +16,7 @@ var drawData = [];
 
 //initialize
 function init() {
+
     canvas = document.getElementById("canvas");
     canvas_context = canvas.getContext("2d");
 
@@ -67,7 +68,7 @@ function init() {
     $("#canvas").mouseleave(function (e) {
         mouseOn = false;
     });
-    
+
     readCanvas();
 }
 
@@ -94,6 +95,7 @@ function doPaint(x, y, isPaint) {
             if (isPaint) {
                 canvas_context.lineWidth = $("#select-width").val() * 1.75;
                 canvas_context.rect(x, y, w, h);
+                canvas_context.fill();
             }
             break;
         case "circle":
@@ -104,7 +106,7 @@ function doPaint(x, y, isPaint) {
     }
     canvas_context.closePath();
     canvas_context.stroke();
-    canvas_context.fill();
+    //canvas_context.fill();
 }
 
 function updateColor(jscolor) {

@@ -84,6 +84,9 @@ function onSignIn(googleUser) {
         console.log("Error: " + error.code);
     });
 
+    if (timeoutStatus === null) {
+        timeoutStatus = false;
+    }
     writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(), timeoutStatus);
 }
 
@@ -115,7 +118,7 @@ function lock(userId) {
     });
 
     timeoutTimer.start({countdown: true, startValues: {seconds: 30}});
-    $('#timeoutTimer .values').html(timeoutTimer.getTimeValues().toString());
+    $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
     timeoutTimer.addEventListener('secondsUpdated', function (e) {
         $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
     });
@@ -182,48 +185,131 @@ $("#canvas").mousedown(function (e) {
         modal.style.display = "block";
     } else if (loginStatus && !timeoutStatus) {
         tempDrawing.push(x, y);
-        startDrawing();
     }
-
-
 });
 
-function startDrawing() {
-    $("#canvas").mousemove(function (e) {
-        var x = e.pageX - $(this).offset().left;
-        var y = parseInt(e.pageY - $(this).offset().top);
+$("#canvas").mousemove(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
 
-        if (mouseOn) {
+    if (mouseOn) {
+        if (returnTool() === "line") {
+
+        } else {
             tempDrawing.push(x, y);
         }
+    }
+});
+
+$("#canvas").mouseup(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+    var width;
+    var tool = returnTool();
+    if ($("#select-width").val() === null) {
+        width = 1;
+    } else {
+        width = parseInt($("#select-width").val());
+    }
+
+    tempDrawing.push(x, y);
+
+    drawingRef.push({
+        tool: tool,
+        points: tempDrawing,
+        color: hex,
+        width: width
     });
 
-    $("#canvas").mouseup(function (e) {
-        var x = e.pageX - $(this).offset().left;
-        var y = parseInt(e.pageY - $(this).offset().top);
-        var width;
-        if ($("#select-width").val() === null) {
-            width = 1;
-        } else {
-            width = $("#select-width").val();
-        }
-        
+    mouseOn = false;
+    tempDrawing = [];
+});
+
+$("#canvas").mouseleave(function (e) {
+    var x = e.pageX - $(this).offset().left;
+    var y = parseInt(e.pageY - $(this).offset().top);
+    var tool = returnTool();
+    var width;
+    if ($("#select-width").val() === null) {
+        width = 1;
+    } else {
+        width = parseInt($("#select-width").val());
+    }
+
+    if (mouseOn) {
         tempDrawing.push(x, y);
 
         drawingRef.push({
+            tool: tool,
             points: tempDrawing,
             color: hex,
             width: width
         });
+    }
+});
 
-        mouseOn = false;
-        tempDrawing = [];
-    });
+function readCanvas() {
+    drawingRef.once('value', gotData, errData);
 }
 
+var canvas = document.getElementById("canvas");
+var canvas_context = canvas.getContext("2d");
 
+function gotData(data) {
+    if (!data.hasChildren()) {
 
-$("#canvas").mouseleave(function (e) {
-    mouseOn = false;
-    //endDrawing();
-});
+    } else {
+        //console.log(data.val());
+        var drawings = data.val();
+        var keys = Object.keys(drawings);
+        //console.log(keys);
+
+        for (var i = 0; i < keys.length; i++) {
+            var k = keys[i];
+            var tool = drawings[k].tool;
+            var color = drawings[k].color;
+            var width = drawings[k].width;
+            var points = drawings[k].points;
+
+            renderDrawings(tool, color, width, points);
+        }
+    }
+}
+
+function renderDrawings(tool, color, width, points) {
+    var prevX, prevY;
+
+    canvas_context.beginPath();
+    canvas_context.strokeStyle = color;
+    canvas_context.fillStyle = color;
+    canvas_context.lineWidth = width;
+    canvas_context.lineJoin = "round";
+    for (var j = 0; j < points.length; j += 2) {
+        var x = points[j];
+        var y = points[j + 1];
+
+        switch (tool) {
+            case "line":
+            case "brush":
+                canvas_context.moveTo(prevX, prevY);
+                canvas_context.lineTo(x, y);
+                prevX = x;
+                prevY = y;
+                break;
+            case "rect":
+                canvas_context.lineWidth = width * 1.75;
+                canvas_context.rect(x, y, 10, 10);
+                break;
+            case "circle":
+                canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
+                break;
+        }
+    }
+    canvas_context.closePath();
+    canvas_context.stroke();
+    canvas_context.fill();
+}
+
+function errData(err) {
+    console.log(err);
+}

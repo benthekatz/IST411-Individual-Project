@@ -67,13 +67,8 @@ function init() {
     $("#canvas").mouseleave(function (e) {
         mouseOn = false;
     });
-//
-//    $("#canvas").mousemove(function (e) {
-//        if (!mouseOn) {
-//            return;
-//        }
-//    });
-
+    
+    readCanvas();
 }
 
 function returnTool() {
@@ -116,11 +111,5 @@ function updateColor(jscolor) {
     canvas_context.strokeStyle = '#' + jscolor;
     canvas_context.fillStyle = '#' + jscolor;
     hex = jscolor.toHEXString();
-}
-
-function resizeCanvas() {
-    var canvas = document.querySelector('#canvas');
-    canvas.width = window.innerWidth * 0.75;
-    canvas.height = window.innerHeight * 0.75;
 }
 

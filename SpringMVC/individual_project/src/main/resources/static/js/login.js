@@ -325,6 +325,55 @@ function renderDrawings(tool, color, width, points) {
     }
 }
 
+//Sync Firebase Drawing List Changes
+drawingRef.limitToLast(1).on('child_added', function(data) {
+    var prevX, prevY;
+    
+    var newDrawing = data.val();
+    var tool = newDrawing.tool;
+    var color = newDrawing.color;
+    var width = newDrawing.width;
+    var points = newDrawing.points;
+
+    canvas_context.beginPath();
+    canvas_context.strokeStyle = color;
+    canvas_context.fillStyle = color;
+    canvas_context.lineWidth = width;
+    canvas_context.lineJoin = "round";
+    
+    for (var j = 0; j < points.length; j += 2) {
+        var x = points[j];
+        var y = points[j + 1];
+
+        switch (tool) {
+            case "line":
+            case "brush":
+                canvas_context.moveTo(prevX, prevY);
+                canvas_context.lineTo(x, y);
+                prevX = x;
+                prevY = y;
+
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
+                break;
+            case "rect":
+                canvas_context.beginPath();
+                canvas_context.lineWidth = width * 1.75;
+                canvas_context.rect(x, y, 10, 10);
+
+                canvas_context.closePath();
+                canvas_context.stroke();
+                canvas_context.fill();
+                break;
+            case "circle":
+                canvas_context.arc(x, y, 10, 0, 2 * Math.PI);
+                canvas_context.stroke();
+                break;
+        }
+    }
+});
+
 function errData(err) {
     console.log(err);
 }

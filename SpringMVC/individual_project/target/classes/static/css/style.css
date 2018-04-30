@@ -2,6 +2,15 @@ body{
     overflow: hidden;
 }
 
+#account-btn {
+   float: right !important;
+   color: white;
+}
+
+#buttons {
+    padding-right: 10 px !important;
+}
+
 #canvas-container {
     width: 75%;
     height: 75%;
@@ -17,9 +26,8 @@ body{
     cursor: crosshair;
 }
 
-#account-btn {
-   float: right !important;
-   color: white;
+#drawingTimer, #timeoutTimer {
+    font-size: 200%;
 }
 
 #paint {
@@ -31,10 +39,6 @@ body{
 
 #toolbar {
     
-}
-
-#buttons {
-    padding-right: 10 px !important;
 }
 
 input, select {
@@ -78,8 +82,4 @@ input, select {
     color: #000;
     text-decoration: none;
     cursor: pointer;
-}
-
-.values {
-    font-size: 200%;
 }

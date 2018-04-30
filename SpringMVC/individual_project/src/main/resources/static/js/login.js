@@ -18,9 +18,14 @@ var provider = new firebase.auth.GoogleAuthProvider();
 var database = firebase.database();
 
 //timers
-var drawingTimer = new Timer();
 var timeoutTimer = new Timer();
-var timeLeft;
+
+//drawings
+var hex = "#000000";
+var drawingRef = firebase.database().ref('drawings');
+var newDrawingRef = drawingRef.push();
+var mouseOn = false;
+var tempDrawing = [];
 
 var initClient = function () {
     gapi.load('auth2', function () {
@@ -75,59 +80,70 @@ function onSignIn(googleUser) {
     ref.once("value", function (snapshot) {
         timeout = snapshot.child("timeout_active").val();
         if (timeout === true) {
-            timeoutStatus = true;
             lock(userId);
+            timeoutStatus = true;
         } else {
-            timeoutStatus = false;
             unlock(userId);
+            timeoutStatus = false;
         }
     }, function (error) {
         console.log("Error: " + error.code);
     });
 
-    if (timeoutStatus === null) {
-        timeoutStatus = false;
-    }
     writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(), timeoutStatus);
+}
+
+var interval = 60000;
+
+function reset() {
+    localStorage.endTime = +new Date + interval;
 }
 
 function unlock(userId) {
     timeoutStatus = false;
     timeoutModal.style.display = "none";
+    $("#drawingTimer").show();
 
     firebase.database().ref('users/' + userId).update({
         timeout_active: timeoutStatus
     });
 
-    drawingTimer.start({countdown: true, startValues: {seconds: 30}});
-    $('#drawingTimer .values').html(drawingTimer.getTimeValues().toString());
-    drawingTimer.addEventListener('secondsUpdated', function (e) {
-        $('#drawingTimer .values').html(drawingTimer.getTimeValues().toString());
-        timeLeft = drawingTimer.getTimeValues();
-    });
-    drawingTimer.addEventListener('targetAchieved', function (e) {
-        $('#drawingTimer .values').html("");
-        lock(userId);
-    });
+    if (!localStorage.endTime) {
+        reset();
+    }
+
+    setInterval(function () {
+        var remaining = localStorage.endTime - new Date;
+        if (remaining >= 0) {
+            $('#timer').text(Math.floor(remaining / 1000));
+        } else {
+            lock(userId);
+            localStorage.clear();
+            $("#drawingTimer").hide();
+        }
+    }, 100);
 }
 
 function lock(userId) {
     timeoutStatus = true;
-    timeoutModal.style.display = "block";
 
     firebase.database().ref('users/' + userId).update({
         timeout_active: timeoutStatus
     });
 
-    timeoutTimer.start({countdown: true, startValues: {seconds: 60}});
-    $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
-    timeoutTimer.addEventListener('secondsUpdated', function (e) {
+    if (loginStatus) {
+        timeoutModal.style.display = "block";
+        
+        timeoutTimer.start({countdown: true, startValues: {seconds: 60}});
         $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
-    });
-    timeoutTimer.addEventListener('targetAchieved', function (e) {
-        $('#timeoutTimer .values').html("");
-        unlock(userId);
-    });
+        timeoutTimer.addEventListener('secondsUpdated', function (e) {
+            $('#timeoutTimer .values').html("You can draw in: " + timeoutTimer.getTimeValues().toString());
+        });
+        timeoutTimer.addEventListener('targetAchieved', function (e) {
+            $('#timeoutTimer .values').html("");
+            unlock(userId);
+        });
+    }
 }
 
 function isUserEqual(googleUser, firebaseUser) {
@@ -151,8 +167,7 @@ var onFailure = function (error) {
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     $(".collapse").collapse("hide");
-    drawingTimer.stop();
-    $('#drawingTimer .values').html("");
+    $('#drawingTimer').hide();
     auth2.signOut().then(function () {
         loginStatus = false;
         console.log('User signed out.');
@@ -163,20 +178,14 @@ close.onclick = function () {
     modal.style.display = "none";
 };
 
-function writeUserData(userId, name, email, imageUrl, timeoutStatus) {
+function writeUserData(userId, name, email, imageUrl, timeout) {
     firebase.database().ref('users/' + userId).set({
         username: name,
         email: email,
         profile_picture: imageUrl,
-        timeout_active: timeoutStatus
+        timeout_active: timeout
     });
 }
-
-var hex = "#000000";
-var drawingRef = firebase.database().ref('drawings');
-var newDrawingRef = drawingRef.push();
-var mouseOn = false;
-var tempDrawing = [];
 
 $("#canvas").mousedown(function (e) {
     mouseOn = true;
@@ -240,19 +249,20 @@ $("#canvas").mouseleave(function (e) {
     } else {
         width = $("#select-width").val();
     }
+    if (mouseOn) {
+        if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
+            tempDrawing.push(x, y);
 
-    if (loginStatus === undefined && !timeoutStatus || loginStatus && !timeoutStatus || loginStatus !== undefined && timeoutStatus !== undefined) {
-        tempDrawing.push(x, y);
-
-        drawingRef.push({
-            tool: tool,
-            points: tempDrawing,
-            color: hex,
-            width: width
-        });
+            drawingRef.push({
+                tool: tool,
+                points: tempDrawing,
+                color: hex,
+                width: width
+            });
+        }
+        mouseOn = false;
+        tempDrawing = [];
     }
-    mouseOn = false;
-    tempDrawing = [];
 });
 
 function readCanvas() {
@@ -326,9 +336,9 @@ function renderDrawings(tool, color, width, points) {
 }
 
 //Sync Firebase Drawing List Changes
-drawingRef.limitToLast(1).on('child_added', function(data) {
+drawingRef.limitToLast(1).on('child_added', function (data) {
     var prevX, prevY;
-    
+
     var newDrawing = data.val();
     var tool = newDrawing.tool;
     var color = newDrawing.color;
@@ -340,7 +350,7 @@ drawingRef.limitToLast(1).on('child_added', function(data) {
     canvas_context.fillStyle = color;
     canvas_context.lineWidth = width;
     canvas_context.lineJoin = "round";
-    
+
     for (var j = 0; j < points.length; j += 2) {
         var x = points[j];
         var y = points[j + 1];

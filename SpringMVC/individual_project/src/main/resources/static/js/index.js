@@ -21,7 +21,7 @@ function init() {
     canvas_context = canvas.getContext("2d");
 
     canvas.width = window.innerWidth * 0.75;
-    canvas.height = window.innerHeight * 0.75
+    canvas.height = window.innerHeight * 0.75;
 
 
     $("#canvas").mousedown(function (e) {

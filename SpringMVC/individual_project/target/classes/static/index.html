@@ -17,7 +17,7 @@
         <meta name="google-signin-client_id" content="414455299180-fk4c9c0glkv9d4g2r9i8k6aaquc04v6h.apps.googleusercontent.com">
     </head>
 
-    <body onload="init()" onunload="updateColor(jscolor)">
+    <body onload="init()" onunload="updateColor(jscolor)" onresize="init()">
 
 
         <div id="title">
@@ -48,17 +48,16 @@
                         <option value="5">3</option>
                         <option value="7">4</option>
                     </select>
+                    <a id="download" download="canvas.png"><button class="btn btn-dark navbar-btn" onclick="saveImage()"><i class="fa fa-save"></i></button></a>
                     <a id="account-btn" class="g-signin2" data-onsuccess="onSignIn"></a>
                     <a id="account-btn" class="btn btn-default navbar-btn pull-right" onclick="signOut();">Sign Out</a>
                 </nav>
             </div>
             <div id="paint">
-                <canvas id="canvas"></canvas>
+                <canvas id="canvas">Your browser does not support Canvas.</canvas>
             </div>
         </div>
-        <div id="drawingTimer">
-            <center><div class="values"></div></center>
-        </div>
+        <center><div id="drawingTimer" style="display: none">Drawing Timer: <span id="timer"></span></div></center>
 
         <div id="loginModal" class="modal">
             <div class="modal-content">

@@ -11,7 +11,6 @@
 <body>
 
   <div id="header">
-    <h1>IST 411 Checkpoint 3</h1>
     <h3>Benjamin Katz</h3>
   </div>
   <div id="blocktext">
@@ -25,192 +24,19 @@
       </center>
     </div>
 
-    <center>
-      <h2 id="projectplan">Project Plan</h2>
-    </center>
+    <center><h2 id="a-realtime-generative-drawing-canvas-">A Realtime Generative Drawing Canvas!</h2></center>
+    <p>The Realtime Generative Drawing Canvas was the individual project for my IST 411 (Distrubuted-Object Computing) course at the Pennsylvania State University. The main emphasis of this project was to showcase a piece of artwork that continues to build upon itself with help from the community that accesses it via the web.
+      <img src="https://i.imgur.com/zm4anEi.png" alt="enter image description here" style="width: 100%"> Check out the live demo <a href="http://www.benthekatz.com/pages/canvas.html">here</a>.</p>
+    <center><h2 id="final-submission">Final Submission</h2></center>
+    <p><strong>✓ Realtime Drawing</strong><br />
+    ✓ User can easily log in or create an account in order to start drawing.<br />✓ Canvas is fully operational with useful tools (brush, square, circle, line, etc). ✓ User is only able to draw for a defined timespan before receiving a timeout. ✓ Canvas is still viewable if the timeout status is currently active; however, changes cannot be made until timeout resolves.<br /> ✓ Additional features are apparent - user can save an image of the canvas, for example.<br />✓ Canvas supports multiple users, as in multiple users can interact with the canvas at the same time.</p>
+    
+    <center><h2 id="completed-">Completed:</h2></center>
+    <p><strong>✓Checkpoint 3:</strong><br> ✓ Users can draw for a certain amount of time before receiving a timeout (which is assigned to their account)<br /> ✓ Timeout prevents user from drawing on the canvas <br />✓ Canvas is persistent, drawings are now permanent</p>
+    <p> <strong>✓Checkpoint 2:</strong><br> ✓ User accounts are tied to database ✓ Login modal prompts user to login/create account before being able to make changes to canvas ✓ Additional canvas features such as lines and shapes can be used to draw</p>
+    <p><strong>✓ Checkpoint 1:</strong><br>✓ On the homepage, the canvas is fully operational and its features are implemented - user can draw and use canvas to their liking. Timeouts are not implemented.</p>
 
-    <p><strong>✓Checkpoint 3:</strong> <br />✓ Users can draw for a certain amount of time before receiving a timeout (which is assigned to their account) <br />✓ Timeout prevents user from drawing on the canvas<br /> ✓ Canvas is persistent, drawings are now permanent</p>
 
-    <p>Timeouts are handled via Firebase, and is tied to each user. It is in this manner that timeouts delivered are persistent; meaning, if a user were to close the browser during a timeout, they would have to wait for it to finish on their next Google sign-in.</p>
-
-    <center>
-      <h2 id="nextsteps">Next Steps</h2>
-    </center>
-
-    <p><strong>Final Project:</strong> <br /> User can easily log in or create an account in order to start drawing. Canvas is fully operational with useful tools (brush, square, circle, line, etc). User is only able to draw for a defined timespan before receiving a timeout. Canvas is still viewable if the timeout status is currently active; however, changes cannot be made until timeout resolves. Additional features are apparent - user can save an image of the canvas, for example.<br />
-      <strong>Additional features based on proposal feedback:</strong> Canvas supports multiple users, as in multiple users can interact with the canvas at the same time.</p>
-
-    <center>
-      <h2 id="completed">Completed:</h2>
-    </center>
-
-    <p><strong>✓ Checkpoint 1:</strong> <br /> ✓ On the homepage, the canvas is fully operational and its features are implemented - user can draw and use canvas to their liking. Timeouts are not implemented.</p>
-
-    <p><strong>✓Checkpoint 2:</strong> <br /> ✓ User accounts are tied to database ✓ Login modal prompts user to login/create account before being able to make changes to canvas ✓ Additional canvas features such as lines and shapes can be used to draw</p>
   </div>
-  
-  <div id="header">
-    <h2>Checkpoint 2 (Tag <a href="https://github.com/benthekatz/IST411-Individual-Project/releases/tag/Checkpoint2">Checkpoint2</a>)</h2>
-  </div>
-  <div id="blocktext">
-    <p><strong>✓Checkpoint 2:</strong>
-      <br /> ✓ User accounts are tied to database
-      <br /> ✓ Login modal prompts user to login/create account before being able to make changes to canvas
-      <br /> ✓ Additional canvas features such as lines and shapes can be used to draw</p>
-
-    <p><img src="https://image.ibb.co/gzyywn/db.png" alt="Firebase DB" style="width: 100%;" /> When a user logs in via the Google sign-in button, their profile information is written to the Google Firebase Database.</p>
-
-    <p>Not only is this data persistent, it checks for existing User Ids before writing - thus, only new users are saved to the database. Additionally, if an existing user changes his/her Google account <em>username</em> or <em>profile_picture</em>, these changes will be updated on their next sign-in.</p>
-
-    <hr />
-
-    <p><strong>Checkpoint 3:</strong> <br /> Timeout functionality is implemented. Users will have a timeout length and id assigned to their accounts, preventing them from making changes to the canvas if a timeout is active. Additionally, users will only be able to draw on the canvas for a certain amount of time before receiving a timeout.</p>
-
-    <p><strong>Clarification:</strong></p>
-
-    <ul>
-      <li>Users can draw for a certain amount of time before receiving a timeout (which is assigned to their account)</li>
-
-      <li>Timeout prevents user from drawing on the canvas</li>
-
-      <li>Canvas is persistent, drawings are now permanent</li>
-    </ul>
-
-    <hr />
-
-    <p><strong>Final Project:</strong> <br /> User can easily log in or create an account in order to start drawing. Canvas is fully operational with useful tools (brush, square, circle, line, etc). User is only able to draw for a defined timespan before receiving a timeout. Canvas is still viewable if the timeout status is currently active; however, changes cannot be made until timeout resolves. Additional features are apparent - user can save an image of the canvas, for example.
-      <strong>Additional features based on proposal feedback:</strong> Canvas supports multiple users, as in multiple users can interact with the canvas at the same time.</p>
-
-    <hr />
-
-    <h2 id="completed">Completed:</h2>
-
-    <p><strong>✓ Checkpoint 1:</strong> <br /> ✓ On the homepage, the canvas is fully operational and its features are implemented - user can draw and use canvas to their liking. Timeouts are not implemented.</p>
-  </div>
-
-  <div id="header">
-    <h2>Checkpoint 1 (Tag <a href="https://github.com/benthekatz/IST411-Individual-Project/releases/tag/Checkpoint1">Checkpoint1</a>)</h2>
-  </div>
-  <div id="blocktext">
-    <center>
-      <h2 id="clarification">Clarification</h2>
-    </center>
-
-    <p>The purpose of this section is to clarify the questions and concerns that were asked about the project proposal (found below this section).</p>
-
-    <p><strong>Is there only one canvas at a time?</strong> Yes, the purpose of this project is to have a single, generative canvas. Users who access the website will essentially be interacting with the same canvas.</p>
-
-    <p><strong>Are you attempting to support as many users as there are?</strong> Discussed this idea of scalability briefly with Professor Reitter - while I would like to be able to accomodate as many potential users as there are, I believe a more reasonable goal within the bounds of this project deadline would be to accomodate, at most, a dozen users interacting with the same canvas.</p>
-
-    <p><strong>Can multiple users draw at the same time?</strong> This is a very good question and was not something I had considered during my initial stages of planning. After doing some research, I believe it to be something that can be accomplished later on in my project. I have reflected this by <em>adding</em> a requirement to the <em>Final Project</em> stage of my project.</p>
-
-    <p><strong>Are user accounts just for the ability to draw?</strong> In short, yes, but they provide more than that. Initially, this plan was established to prevent users from getting around timeouts - allowing them to draw continuously without penalty. Since a timeout is assigned to the account, the user would be unable to continue drawing. If it so happens that I find an easier method of handling timeouts for each artist, I will do so in lieu of a database of users. </p>
-
-    <center>
-      <h2 id="projectplan">Project Plan</h2>
-    </center>
-
-    <p><strong>✓ Checkpoint 1:</strong> <br /> ✓ On the homepage, the canvas is fully operational and its features are implemented - user can draw and use canvas to their liking. Timeouts are not implemented.</p>
-
-    <hr />
-
-    <p><strong>Checkpoint 2:</strong> <br /> Create user classes and provide database functionality. An affiliated login page/modal will prompt the user to login or create an account before being able to change the canvas (it is still viewable, however). Added complexity on canvas with additional tools such as shape and line creation are apparent.</p>
-
-    <p><strong>Clarification:</strong></p>
-
-    <ul>
-      <li>User accounts are tied to database</li>
-
-      <li>Login modal prompts user to login/create account before being able to make changes to canvas</li>
-
-      <li>Additional canvas features such as lines and shapes can be used to draw</li>
-    </ul>
-
-    <hr />
-
-    <p><strong>Checkpoint 3:</strong> <br /> Timeout functionality is implemented. Users will have a timeout length and id assigned to their accounts, preventing them from making changes to the canvas if a timeout is active. Additionally, users will only be able to draw on the canvas for a certain amount of time before receiving a timeout.</p>
-
-    <p><strong>Clarification:</strong></p>
-
-    <ul>
-      <li>Users can draw for a certain amount of time before receiving a timeout (which is assigned to their account)</li>
-
-      <li>Timeout prevents user from drawing on the canvas</li>
-
-      <li>Canvas is persistent, drawings are now permanent</li>
-    </ul>
-
-    <hr />
-
-    <p><strong>Final Project:</strong> <br /> User can easily log in or create an account in order to start drawing. Canvas is fully operational with useful tools (brush, square, circle, line, etc). User is only able to draw for a defined timespan before receiving a timeout. Canvas is still viewable if the timeout status is currently active; however, changes cannot be made until timeout resolves. Additional features are apparent - user can save an image of the canvas, for example.
-      <strong>Additional features based on proposal feedback:</strong> Canvas supports multiple users, as in multiple users can interact with the canvas at the same time.</p>
-
-    <hr />
-  </div>
-
-  <div id="header">
-    <h2>IST 411 Proposal (Tag <a href="https://github.com/benthekatz/IST411-Individual-Project/releases/tag/proposal">proposal</a>)</h2>
-  </div>
-  <div id="blocktext">
-    <center>
-      <h2><strong>Description:</strong></h2>
-    </center>
-    <p><span style="font-weight: 400;">A collaborative canvas where new additions are permanent. Users will be able to paint the canvas however they wish. Any contribution will remain on the canvas permanently, but can still be drawn over by another user. To combat malicious intent, (e.g. painting the entire canvas in a single color), users will be able to draw for a certain amount of time before receiving a timeout, preventing them from painting further. Once the timeout expires, the user will be able to access the canvas again and resume painting. </span></p>
-    <center>
-      <h2><strong>Design:</strong></h2>
-    </center>
-    <p><span style="font-weight: 400;">The creation of the canvas and subsequent mouse listeners will be handled with front-end technologies such as HTML5, CSS, Javascript, and jQuery. Frameworks that we have learned in class will be used as well, including Thymeleaf, Maven, and Spring MVC. Additionally, jCanvas, which is a jQuery plugin, could provide added functionality for the creation of canvas elements (such as circles, squares, arcs and lines). </span></p>
-    <p><span style="font-weight: 400;">A MySQL database will be used to store a list of users, and will help with handling the assigning of timeouts. Additionally, it may be used to store the current state of the canvas; which can be done by saving an image via the MySQL </span><em><span style="font-weight: 400;">longblob</span></em><span style="font-weight: 400;"> type. However, since the storage of images is not ideal in a database and could pose problems, an alternative would be to store the canvas screenshot(s) in project file system instead. </span></p>
-    <div id="table">
-      <table border="1" cellpadding="1">
-        <tbody>
-          <tr style="height: 41px;">
-            <td style="width: 16.3482%; height: 41px;">Use Case 1</td>
-            <td style="width: 83.4218%; height: 41px;">Artist paints on canvas</td>
-          </tr>
-          <tr style="height: 20px;">
-            <td style="width: 16.3482%; height: 20px;">Actor</td>
-            <td style="width: 83.4218%; height: 20px;">Artist</td>
-          </tr>
-          <tr style="height: 90px;">
-            <td style="width: 16.3482%; height: 90px;">Overview</td>
-            <td style="width: 83.4218%; height: 90px;">
-              <p>&nbsp;Artist has an account and attempts to paint on canvas. If no timeout is active, he is able to paint and does so for the allotted time. Once the "painting timer" ends, a new timeout is issued and he can no longer paint until said timeout resolves.</p>
-            </td>
-          </tr>
-          <tr style="height: 40px;">
-            <td style="width: 16.3482%; height: 40px;">Alternate Scenario 1</td>
-            <td style="width: 83.4218%; height: 40px;">If artist is not signed in, artist will be unable to paint on canvas, but can still view it. Artist logs in to gain access to the canvas.</td>
-          </tr>
-          <tr style="height: 100px;">
-            <td style="width: 16.3482%; height: 100.3px;">Alternate Scenario 2</td>
-            <td style="width: 83.4218%; height: 100.3px;">If a timeout is active, artist will be unable to log out or create a new account, and cannot make changes to the canvas. The canvas, however, is still viewable. Artist waits until the timeout resolves before being able to paint or do account-related actions.</td>
-          </tr>
-          <tr style="height: 20px;">
-            <td style="width: 16.3482%; height: 20px;">Preconditions</td>
-            <td style="width: 83.4218%; height: 20px;">Artist has an account, and timeout is false</td>
-          </tr>
-          <tr style="height: 20px;">
-            <td style="width: 16.3482%; height: 20px;">Postconditions</td>
-            <td style="width: 83.4218%; height: 20px;">Timeout is set to true once "painting timer" ends.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <center>
-      <h2><strong>Schedule:</strong></h2>
-    </center>
-    <p><span style="font-weight: 400;"><strong>Checkpoint 1:</strong> On the homepage, the canvas is fully operational and its features are implemented - user can draw and use canvas to their liking. Timeouts are not implemented.</span></p>
-    <p><span style="font-weight: 400;"><strong>Checkpoint 2:</strong> Create user classes and provide database functionality. An affiliated login page/modal will prompt the user to login or create an account before being able to change the canvas (it is still viewable, however). Added complexity on canvas with additional tools such as shape and line creation are apparent. </span></p>
-    <p><span style="font-weight: 400;"><strong>Checkpoint 3:</strong> Timeout functionality is implemented. Users will have a timeout length and id assigned to their accounts, preventing them from making changes to the canvas if a timeout is active. Additionally, users will only be able to draw on the canvas for a certain amount of time before receiving a timeout.</span></p>
-    <p><span style="font-weight: 400;"><strong>Final Project:</strong> User can easily log in or create an account in order to start drawing. Canvas is fully operational with useful tools (brush, square, circle, line, etc). User is only able to draw for a defined timespan before receiving a timeout. Canvas is still viewable if the timeout status is currently active; however, changes cannot be made until timeout resolves. Additional features are apparent - user can save an image of the canvas, for example.</span></p>
-    <center>
-      <h2><strong>Justification:</strong></h2>
-    </center>
-    <p><span style="font-weight: 400;">The purpose of such a project would be to showcase a piece of artwork that is continuously evolving. It would be fascinating to observe a collection of contributions from multiple users and the interactions within - protecting your artwork if it has been tampered with, and expanding your own artwork, consuming others&rsquo; in the process if you so choose.</span></p>
-    <p><span style="font-weight: 400;">While brainstorming individual project ideas earlier in the semester, the basic canvas idea intrigued me. However, I wanted to take this idea a step further and create a playground where each contribution left a lasting mark. I honestly believe this will be a great way of showcasing my abilities, particularly by using my experience in front-end web development. As a design-oriented programmer, this canvas project would be a great way of demonstrating artistic expression within an intuitive and responsive final project. </span></p>
-  </div>
-
-</body>
 
 </html>

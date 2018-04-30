@@ -121,6 +121,5 @@ function saveImage() {
     
     var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
     download.setAttribute("href", image);
-    
 }
 

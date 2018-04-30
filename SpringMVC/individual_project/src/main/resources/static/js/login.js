@@ -90,7 +90,7 @@ function onSignIn(googleUser) {
         console.log("Error: " + error.code);
     });
 
-    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl(), timeoutStatus);
+    writeUserData(profile.getId(), profile.getName(), profile.getEmail(), profile.getImageUrl());
 }
 
 var interval = 60000;
@@ -287,6 +287,9 @@ function gotData(data) {
             var color = drawings[k].color;
             var width = drawings[k].width;
             var points = drawings[k].points;
+            if(color === null || color === undefined){
+                color = "#000000"
+            }
 
             renderDrawings(tool, color, width, points);
         }
